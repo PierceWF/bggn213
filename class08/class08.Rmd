@@ -1,0 +1,88 @@
+---
+title: "Machine Learning 1"
+author: "Pierce Ford (PID: A59010464)"
+date: "10/22/2021"
+output: html_document
+---
+
+#Clustering Methods
+
+Kmeans clustering in R is done with the `kmeans()` function.
+Here we make up some data to test and learn with.
+
+```{r}
+tmp <- c(rnorm(30, 3), rnorm(30, -3))
+#Make a two column dataset that includes tmp and tmp reversed, to make two clear
+#groups of points
+data <- cbind(tmp, rev(tmp))
+plot(data)
+```
+
+Run `kmeans()` set k (centers) to 2 and nstart to 20. The thing with Kmeans is 
+you have to tell it how many clusters you want.
+
+```{r}
+km <- kmeans(data, centers=2, nstart=20)
+km
+```
+
+> Q. How many points are in each cluster?
+
+```{r}
+km$size
+```
+
+> Q. What 'component of your result object details cluster 
+assignment/membership?
+
+```{r}
+km$cluster
+```
+
+> Q. What 'component of your result object details cluster cluster center?
+
+```{r}
+km$centers
+```
+
+
+> Q. Plot x colored by the kmeans cluster assignment and add cluster centers as 
+blue points?
+
+```{r}
+plot(data, col=km$cluster)
+points(km$centers, col="blue", pch=15)
+```
+
+#Hierarchal Clustering
+
+We will use the `hclust()`function on the same data as before and see how this 
+method works.
+
+```{r}
+hc <- hclust(dist(data))
+hc
+```
+
+Hclust has a plot method
+
+```{r}
+plot(hc, cex=0.7)
+```
+
+To find our membership vector we need to "cut" the tree and for this we use the 
+`cutree()` function and tell it the height to cut at.
+
+```{r}
+cutree(hc, h=7)
+```
+
+We can also use `cutree()` and state the number of k cluster we want.
+
+```{r}
+grps <- cutree(hc, k=2)
+#plot with hc clusters as color
+plot(data, col=grps)
+```
+
+#Principal Component Analysis (PCA)
