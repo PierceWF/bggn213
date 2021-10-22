@@ -2,7 +2,7 @@
 title: "Machine Learning 1"
 author: "Pierce Ford (PID: A59010464)"
 date: "10/22/2021"
-output: html_document
+output: pdf_document
 ---
 
 #Clustering Methods
@@ -86,3 +86,107 @@ plot(data, col=grps)
 ```
 
 #Principal Component Analysis (PCA)
+
+PCA is useful for visualizing key variance in datasets with high dimensionality.
+
+##PCA of UK Food Data
+Let's read in the UK food dataset.
+
+```{r}
+url <- "https://tinyurl.com/UK-foods"
+x <- read.csv(url)
+```
+
+```{r}
+#Reformat the dataset so the rownames aren't their own column, however this is 
+#destructive
+rownames(x) <- x[,1]
+x <- x[,-1]
+```
+
+```{r}
+#Instead, let's read it in properly to begin with
+x <- read.csv(url, row.names=1)
+```
+
+Now let's plot the data.
+
+```{r}
+#Not an incredibly effective/readable plot
+barplot(as.matrix(x), col=rainbow(17), beside=TRUE)
+```
+
+An exploratory plot that may be useful is pairs.
+
+```{r}
+#You can visualize correlations between groups pairwise
+mycols <-rainbow(nrow(x))
+pairs(x, col=mycols, pch=16)
+```
+
+## PCA to the rescue!
+
+Here we will use the base R function for PCA, which is called `prcomp()`. This
+function wants the transpose of our data.
+
+```{r}
+pca <- prcomp(t(x))
+summary(pca)
+```
+
+```{r}
+plot(pca)
+```
+
+We want the score plot (a.k.a. PCA plot). Basically of PC1 vs PC2.
+
+```{r}
+attributes(pca)
+```
+
+We are after the pca$x component for this plot.
+
+```{r}
+plot(pca$x[,1:2])
+text(pca$x[,1:2], labels=colnames(x), col=c("orange", "pink", "blue", "green"))
+```
+
+We can also examine the PCA "loadings", which tell us how much each food 
+contributed to the principle component.
+
+```{r}
+par(mar=c(10, 3, 0.35, 0))
+barplot(pca$rotation[,1], las=2)
+```
+
+## One more PCA for today
+
+```{r}
+url2 <- "https://tinyurl.com/expression-CSV"
+rna.data <- read.csv(url2, row.names=1)
+head(rna.data)
+```
+
+```{r}
+nrow(rna.data)
+```
+
+```{r}
+ncol(rna.data)
+colnames(rna.data)
+```
+
+```{r}
+pca.rna = prcomp(t(rna.data), scale=TRUE)
+summary(pca.rna)
+```
+
+```{r}
+plot(pca.rna)
+```
+
+```{r}
+plot(pca.rna$x[,1:2])
+text(pca.rna$x[,1:2], labels=colnames(rna.data))
+```
+
