@@ -428,3 +428,23 @@ The PCA model is the most sensitive, but sacrifices specificity (k-means is best
 in terms of specificity, but I still believe the PCA is best for diagnostic 
 purposes).
 
+# Can we now predict diagnoses on new data?
+
+```{r}
+#Read in new samples
+url <- "https://tinyurl.com/new-samples-CSV"
+new <- read.csv(url)
+npc <- predict(wisc.pr, newdata=new)
+npc
+
+#Plot the new samples
+plot(wisc.pr$x[,1:2], col=g)
+points(npc[,1], npc[,2], col="blue", pch=16, cex=3)
+text(npc[,1], npc[,2], c(1,2), col="white")
+```
+
+> Q18. Which of these new patients should we prioritize for follow up based on 
+your results?
+
+Patient 2 falls into the range of red  points (majority malignant cluster), so 
+they should be prioritized.
