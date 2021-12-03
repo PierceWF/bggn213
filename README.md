@@ -1,2 +1,7 @@
-# bggn213
-This repo is for my UCSD bioinformatics class. 
+# Bioinformatics Portfolio
+
+Bioinformatics class at UC San Diego Fall 2021.
+
+## Contents:
+
+- 04. Test
