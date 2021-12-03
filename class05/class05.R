@@ -1,3 +1,7 @@
+#' ---
+#' title: Data Visualization
+#' output: github_document
+#' ---
 #Class 05: Data Visualization
 #Today we are going to use ggplot2
 
