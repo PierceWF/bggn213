@@ -1,0 +1,267 @@
+---
+title: "Class 15"
+author: 'Pierce Ford (PID: A59010464)'
+date: "11/17/2021"
+output: pdf_document
+---
+
+# Background
+
+Today we examine a published RNA-seq experiment where airway smooth muscle cells
+were treated with dexamethasone, a synthetic glucocorticoid steroid with 
+anti-inflammatory effects (Himes et al. 2014).
+
+## Load the contData and colData
+
+```{r}
+counts <- read.csv("airway_scaledcounts.csv", row.names=1)
+metadata <-  read.csv("airway_metadata.csv")
+
+#Examine counts
+nrow(counts)
+head(counts)
+
+#Examine metadata
+head(metadata)
+```
+
+There are `r nrow(counts)` genes in this dataset.
+
+How can we check correspondence of the metadata and count data setup?
+
+```{r}
+#View the metadata row names and counts columns
+metadata$id
+colnames(counts)
+
+#make sure they are the same
+all(metadata$id == colnames(counts))
+```
+
+## Compare Control to Treated
+
+Let's average the data between controls  and treated samples to begin a simple 
+analysis.
+
+```{r}
+control.inds <- metadata$dex == "control"
+control.names <- metadata[control.inds, "id"]
+```
+
+Use the control names to access the corresponding columns of the `counts` data.
+
+```{r}
+control.data <- counts[,control.names]
+control.mean <- rowMeans(control.data)
+```
+
+Repeat for treated.
+
+```{r}
+treated.inds <- metadata$dex == "treated"
+treated.names <- metadata[treated.inds, "id"]
+treated.data <- counts[,treated.names]
+treated.mean <- rowMeans(treated.data)
+```
+
+Combine the averaged data for bookkeeping.
+
+```{r}
+meancounts <- data.frame(control.mean, treated.mean)
+```
+
+## Compare the control and treated
+
+Quick visualization with base R.
+
+```{r}
+plot(meancounts)
+```
+
+This would benefit from log transformation.
+
+```{r}
+plot(meancounts, log="xy")
+```
+
+Log transformations often make data visualization much nicer, base 2 is common.
+
+```{r}
+meancounts$log2FC <- log2(meancounts[,"treated.mean"]/meancounts[,"control.mean"])
+head(meancounts)
+```
+
+Remove data with zero reads in either control or treated cells.
+
+```{r}
+zero.vals <- which(meancounts[,1:2]==0, arr.ind=TRUE)
+to.rm <- unique(zero.vals[,1])
+meancounts.filtered <- meancounts[-to.rm,]
+
+#Examine filtered dataset
+head(meancounts.filtered)
+nrow(meancounts.filtered)
+```
+
+We now have `r nrow(meancounts.filtered)` remaining.
+
+What fraction of these genes are upregulated? Downregulated?
+
+```{r}
+#Upregulated percent
+round(100*(sum(meancounts.filtered$log2FC > 2)/nrow(meancounts.filtered)),2)
+
+#Downregulated percent
+round(100*(sum(meancounts.filtered$log2FC < -2)/nrow(meancounts.filtered)),2)
+```
+
+# DESeq2 analysis
+
+Load DESeq.
+
+```{r}
+library(DESeq2)
+citation("DESeq2")
+```
+
+First need to set up the DESeq input object.
+```{r}
+dds <- DESeqDataSetFromMatrix(countData=counts, 
+                              colData=metadata, 
+                              design=~dex)
+dds
+```
+
+Run the DESeq analysis.
+
+```{r}
+dds <- DESeq(dds)
+```
+
+Open results.
+
+```{r}
+res <- results(dds)
+head(res)
+```
+
+# Visualizing with a Volcano Plot
+
+This is a really common visualization technique for this type of data.
+
+```{r}
+plot(res$log2FoldChange, -log(res$padj))
+abline(v=c(-2,2), col="gray")
+abline(h=-log(0.05), col="gray")
+```
+
+## Adding Annotation Data
+
+We want to add meaningful gene names to our dataset so we can make some 
+biological sense of it.
+
+To do this we will use two bioconductor packages, one does the work and is 
+called **AnnotationDbi** and the other contains the data we are going to map 
+between and is called **org.Hs.eg.db**
+
+```{r}
+library(AnnotationDbi)
+library(org.Hs.eg.db)
+```
+We can use the mapIds function to add the gene symbol (commonly used gene name) 
+to our dataset.
+
+```{r}
+res$symbol <- mapIds(org.Hs.eg.db,
+                     keys=row.names(res), # Our genenames
+                     keytype="ENSEMBL",        # The format of our genenames
+                     column="SYMBOL",          # The new format we want to add
+                     multiVals="first")
+
+head(res)
+```
+
+## Save our results to a CSV for later
+
+```{r}
+write.csv(res, file="allmyresults.csv")
+```
+
+# Pathway Analysis
+
+Bring biology into this analysis using KEGG.
+
+```{r}
+#Load necessary packages
+library(pathview)
+library(gage)
+library(gageData)
+
+data(kegg.sets.hs)
+
+# Examine the first 2 pathways in this kegg set for humans
+head(kegg.sets.hs, 2)
+```
+
+In order to map our data to KEGG pathways, we need to add gene identifiers in 
+the ENTREZ format.
+
+```{r}
+res$entrez <- mapIds(org.Hs.eg.db,
+                     keys=row.names(res), # Our genenames
+                     keytype="ENSEMBL",        # The format of our genenames
+                     column="ENTREZID",          # The new format we want to add
+                     multiVals="first")
+
+res$genename<- mapIds(org.Hs.eg.db,
+                     keys=row.names(res), # Our genenames
+                     keytype="ENSEMBL",        # The format of our genenames
+                     column="GENENAME",          # The new format we want to add
+                     multiVals="first")
+                     
+#Check that the new identifiers were added
+head(res)
+```
+
+The main gage() function requires a named vector of fold changes, where the 
+names of the values are the Entrez gene IDs.
+
+Note that we used the mapIDs() function above to obtain Entrez gene IDs (stored 
+in res\$entrez) and we have the fold change results from DESeq2 analysis (stored
+in res\$log2FoldChange).
+
+```{r}
+#Create the vector
+foldchanges <- res$log2FoldChange
+
+#Give it names
+names(foldchanges) <- res$entrez
+
+#Confirm it worked
+head(foldchanges)
+```
+
+Now we can use `gage()`.
+
+```{r}
+#Get results
+keggres = gage(foldchanges, gsets=kegg.sets.hs)
+
+#View attributes
+attributes(keggres)
+```
+
+```{r}
+#View keggres
+head(keggres$greater)
+head(keggres$less)
+head(keggres$stats)
+```
+
+`pathview()` will add our genes to a kegg pathway as colored entries.
+
+```{r}
+pathview(gene.data=foldchanges, pathway.id="hsa05310")
+```
+
+![](hsa05310.pathview.png)
