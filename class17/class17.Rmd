@@ -1,10 +1,8 @@
 ---
-title: "Class 17 Vaccination Mini Project"
+title: "Class 17: Vaccination Mini Project"
 author: 'Pierce Ford (PID: A59010464)'
 date: "11/24/2021"
-output:
-  pdf_document:
-    latex_engine: xelatex
+output: github_document
 ---
 
 # Background
