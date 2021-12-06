@@ -12,4 +12,5 @@ Bioinformatics class at UC San Diego Fall 2021.
 - 11: [Structural Bioinformatics I](https://github.com/PierceWF/bggn213/blob/main/class11/class11.md)
 - 12: [Structural Bioinformatics II](https://github.com/PierceWF/bggn213/blob/main/class11/class12.md)
 - 15: [Transcriptomics](https://github.com/PierceWF/bggn213/blob/main/class15/Class-15.md)
+- 16: [RNA-Seq Analysis Mini Project](https://github.com/PierceWF/bggn213/blob/main/Class%2016%20Mini%20Project/class16.md)
 - 19: [Genome Informatics](https://github.com/PierceWF/bggn213/blob/main/class19/class19.md)
