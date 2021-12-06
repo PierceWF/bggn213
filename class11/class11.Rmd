@@ -1,5 +1,5 @@
 ---
-title: "Class 11"
+title: "Class 11: Structural Bioinformatics I"
 author: "Pierce Ford (PID: A59010464)"
 output: github_document
 editor_options: 
