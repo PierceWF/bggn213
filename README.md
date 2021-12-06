@@ -4,6 +4,7 @@ Bioinformatics class at UC San Diego Fall 2021.
 
 ## Contents:
 
+- 4: [R Language Basics](https://github.com/PierceWF/bggn213/blob/main/week03/HW_week3.md)
 - 5: [Data Visualization with ggplot2](https://github.com/PierceWF/bggn213/blob/main/class05/class05.md)
 - 6: [R Functions](https://github.com/PierceWF/bggn213/blob/main/class06/class06.md) 
           
