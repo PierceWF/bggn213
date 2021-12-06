@@ -2,7 +2,7 @@
 title: 'Class 19: RNASeq'
 author: 'Pierce Ford (PID: A59010464)'
 date: "12/5/2021"
-output: pdf_document
+output: github_document
 ---
 
 ## Summary of the Goal
