@@ -11,4 +11,5 @@ Bioinformatics class at UC San Diego Fall 2021.
 - 10: [Halloween Mini Project](https://github.com/PierceWF/bggn213/blob/main/class09_mini_project/Candy.md)
 - 11: [Structural Bioinformatics I](https://github.com/PierceWF/bggn213/blob/main/class11/class11.md)
 - 12: [Structural Bioinformatics II](https://github.com/PierceWF/bggn213/blob/main/class11/class12.md)
-- 19: [RNA-Seq](https://github.com/PierceWF/bggn213/blob/main/class19/class19.md)
+- 15: [Transcriptomics](https://github.com/PierceWF/bggn213/blob/main/class15/Class-15.md)
+- 19: [Genome Informatics](https://github.com/PierceWF/bggn213/blob/main/class19/class19.md)
