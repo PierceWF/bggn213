@@ -2,7 +2,7 @@
 title: "Function Supplement HW"
 author: "Pierce Ford PID:A59010464"
 date: "10/16/2021"
-output: pdf_document
+output: github_document
 ---
 >*Improve this regular R code by abstracting the main activities in your own new function. The main steps should entail running through the code to see if it works, simplifying to a core working code snippet, reducing any calculation duplication, and finally transferring your new streamlined code into a more useful function for you.*
 
