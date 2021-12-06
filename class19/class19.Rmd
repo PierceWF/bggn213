@@ -1,5 +1,5 @@
 ---
-title: 'Class 19: RNASeq'
+title: 'Class 19: Genome Informatics'
 author: 'Pierce Ford (PID: A59010464)'
 date: "12/5/2021"
 output: github_document

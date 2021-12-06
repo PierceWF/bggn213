@@ -1,4 +1,4 @@
-Class 19: RNASeq
+Class 19: Genome Informatics
 ================
 Pierce Ford (PID: A59010464)
 12/5/2021
