@@ -2,9 +2,7 @@
 title: 'Class 6: R Functions'
 author: 'Pierce Ford (PID: A59010464)'
 date: "10/15/2021"
-output:
-  pdf_document: default
-  html_document: default
+output: github_document
 ---
 
 ## Quick Rmarkdown Intro
