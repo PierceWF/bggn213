@@ -1,0 +1,61 @@
+---
+title: 'Class 19: RNASeq'
+author: 'Pierce Ford (PID: A59010464)'
+date: "12/5/2021"
+output: pdf_document
+---
+
+## Summary of the Goal
+
+One sample is obviously not enough to know what is happening in a population. You are
+interested in assessing genetic differences on a population scale. So, you processed about
+~230 samples and did the normalization on a genome level. Now, you want to find whether
+there is any association of the 4 asthma-associated SNPs (rs8067378...) on ORMDL3
+expression.
+
+## Q13. Examining the Dataset
+
+> Q13: Read this file into R and determine the sample size for each genotype and their
+corresponding median expression levels for each of these genotypes.
+
+```{r}
+#Read in the data and display the top to check
+expr <- read.table("rs8067378_ENSG00000172057.6.txt")
+head(expr)
+```
+
+```{r}
+#Determine sample size total
+nrow(expr)
+#Determine sample size for each genotype
+table(expr$geno)
+```
+
+```{r}
+#Generate a boxplot object grouped by genotype
+base_box <- boxplot(expr$exp ~ expr$geno)
+#Summarize the statisticsof eacg group
+summary(base_box$stats)
+```
+This shows the median expression levels for each genotype. For the A/A genotype 
+it is 31.25, for the A/G genotype it is 25.065, and for the G/G genotype it is 
+20.074.
+
+## Q14. Using ggplot to Make a Cleaner Boxplot
+```{r}
+library(ggplot2)
+```
+
+> Q14:Generate a boxplot with a box per genotype, what could you infer from the relative
+expression value between A/A and G/G displayed in this plot? Does the SNP effect the
+expression of ORMDL3?
+
+```{r}
+#Build a better boxplot
+ggplot(expr) + aes(geno, exp, fill=geno) +
+  geom_boxplot(notch=TRUE, show.legend=FALSE) +
+  xlab("Genotype") + ylab("Expression Level") + ggtitle("Expression of ORMDL3 by Genotype")
+```
+
+Based on this plot, it appears that the "G" variant SNP lowers the expression of 
+ORMDL3.
