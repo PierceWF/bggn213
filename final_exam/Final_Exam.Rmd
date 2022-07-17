@@ -1,0 +1,58 @@
+---
+title: "BGGN 213 Final Exam"
+author: 'Pierce Ford (PID: A59010464)'
+date: "7/18/2022"
+output: pdf_document
+---
+# Examining COVID Variant Prevalence Over Time
+
+```{r}
+#Load in the necessary libraries
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+```
+
+```{r}
+#Load in the data
+raw_data <- read.csv("covid19_variants.csv")
+```
+
+## Prepping the Data
+
+I'll remove the data for total and other across all variants, as I am only interested in the percentages for each named variant. I'll also convert the date column to actually be date objects for formatting later.
+
+```{r}
+#Filter out the total and other data points
+filtered_data <- raw_data %>% filter((variant_name != "Total" 
+                                      & variant_name != "Other"))
+
+#Convert first column to date objects for formatting x-axis labels later
+filtered_data$date <- ymd(filtered_data$date)
+```
+
+## Plotting the Data
+
+I'll display a line chart comparing prevalence of each of the named COVID variants.
+
+```{r}
+#Draw chart with date on the x-axis and percentage on the y-axis, colored by 
+#variant name
+ggplot(data = filtered_data, aes(x = date, y = percentage, 
+                                 color = variant_name)) +
+  #Draw a line for each variant
+  geom_line(aes(group = variant_name)) +
+  #Change theme to black and white
+  theme_bw() +
+  #Format labels
+  labs(title = "Covid-19 Variants in California", x = "", 
+       y = "Percentage of sequenced specimens", color = "") +
+  #Format x-axis to have abbreviated month and full year labels and increment 
+  #by month
+  scale_x_date(date_labels = "%b %Y", 
+               breaks = function(x) seq.Date(from = as.Date("2021-01-01"), 
+                                             to = max(x), by = "1 month")) +
+  #Adjust position and angle of x-axis labels
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
+
